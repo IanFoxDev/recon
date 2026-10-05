@@ -73,7 +73,7 @@ func Parse(s string, exp int, f Format) (int64, error) {
 	}
 	digits, err := wholeDigits(whole, f.Thousands)
 	if err != nil {
-		return 0, fmt.Errorf("%w: %q: %v", ErrSyntax, s, err)
+		return 0, fmt.Errorf("%w: %q: %w", ErrSyntax, s, err)
 	}
 	for i, r := range frac {
 		if r < '0' || r > '9' {

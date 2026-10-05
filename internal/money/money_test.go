@@ -25,10 +25,10 @@ func TestParse(t *testing.T) {
 		{"1,234,567.89", 2, us, 123456789},
 		{"1.234.567,89", 2, eu, 123456789},
 		{"1100", 0, Format{}, 1100},
-		{"100.00", 0, Format{}, 100},   // extra zeros: Stripe writes ISK like this
-		{"10.990", 2, Format{}, 1099},  // extra zero
-		{"1.234", 3, Format{}, 1234},   // KWD
-		{"0.0001", 4, Format{}, 1},     // CLF
+		{"100.00", 0, Format{}, 100},  // extra zeros, as some exports write zero-decimal currencies
+		{"10.990", 2, Format{}, 1099}, // extra zero
+		{"1.234", 3, Format{}, 1234},  // KWD
+		{"0.0001", 4, Format{}, 1},    // CLF
 		{"0", 2, Format{}, 0},
 		{"-0.01", 2, Format{}, -1},
 		{"92233720368547758.07", 2, Format{}, math.MaxInt64},
@@ -133,7 +133,7 @@ func FuzzParse(f *testing.F) {
 	for _, seed := range []string{"10.99", "1,234.5", "-", "", "1e3", "9999999999999999999"} {
 		f.Add(seed)
 	}
-	f.Fuzz(func(t *testing.T, s string) {
+	f.Fuzz(func(_ *testing.T, s string) {
 		_, _ = Parse(s, 2, Format{Decimal: '.', Thousands: ','})
 	})
 }
