@@ -1,0 +1,21 @@
+name: Export format
+description: A provider or bank export recon should read out of the box
+labels: ["format"]
+body:
+  - type: input
+    id: provider
+    attributes:
+      label: Provider and report name
+      placeholder: Adyen, Settlement details report
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Header and two sample rows, with made-up values
+    validations:
+      required: true
+  - type: input
+    id: docs
+    attributes:
+      label: Link to the provider's documentation of the format

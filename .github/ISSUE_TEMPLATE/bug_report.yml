@@ -1,0 +1,30 @@
+name: Bug report
+description: recon reports something that is not there, misses a difference, or fails on a valid file
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: recon version (recon version)
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: recon.yaml
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: rows
+    attributes:
+      label: The rows involved
+      description: The header and the few rows of each side that show the problem. Replace real references and amounts; keep the format.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What recon did and what you expected
+    validations:
+      required: true
