@@ -1,0 +1,5 @@
+﻿balance_transaction_id,created,available_on,currency,gross,fee,net,reporting_category,source_id,payment_intent_id,charge_id
+txn_001,2026-10-01 09:12:00,2026-10-03 00:00:00,usd,10.99,0.62,10.37,charge,ch_001,pi_001,ch_001
+txn_002,2026-10-01 10:00:00,2026-10-03 00:00:00,usd,-10.99,0.00,-10.99,refund,re_001,pi_001,ch_001
+txn_003,2026-10-01 11:30:00,2026-10-03 00:00:00,isk,100.00,0.00,100.00,charge,ch_002,pi_002,ch_002
+txn_004,2026-10-02 08:00:00,2026-10-04 00:00:00,usd,-500.00,0.00,-500.00,payout,po_001,,
