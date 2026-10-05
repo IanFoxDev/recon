@@ -1,0 +1,30 @@
+name: examples
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  stripe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/stripe
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run recon against the generated shop
+        run: |
+          set +e
+          RECON_UID=$(id -u) RECON_GID=$(id -g) docker compose run --rm --build recon
+          code=$?
+          set -e
+          # Differences are planted, so recon must exit with 1.
+          test "$code" -eq 1
+      - name: The report lists exactly the planted differences
+        run: |
+          test "$(jq .matched out/report.json)" -eq 200
+          diff <(jq -S '[.differences[] | {category, key: .key[0]}] | group_by(.category) | map({(.[0].category): (map(.key) | sort)}) | add' out/report.json) \
+               <(jq -S 'with_entries(.value |= sort)' data/expected.json)
+      - if: always()
+        run: docker compose down -v

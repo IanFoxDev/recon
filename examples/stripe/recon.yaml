@@ -1,0 +1,16 @@
+# The shop's payments in PostgreSQL against a Stripe Balance report export.
+version: 1
+ledger:
+  sql:
+    dsn_env: LEDGER_DSN
+    query: select psp_reference, amount_minor, fee_minor, currency from recon_demo_payments
+  columns: {key: psp_reference, amount: amount_minor, fee: fee_minor, currency: currency}
+provider:
+  csv: {path: data/exports/stripe_*.csv, profile: stripe_balance}
+  columns: {key: payment_intent_id}
+  filter:
+    - {column: reporting_category, in: [charge]}
+report:
+  html: out/report.html
+  json: out/report.json
+  csv: out/differences.csv

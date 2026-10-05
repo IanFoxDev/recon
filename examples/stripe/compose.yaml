@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: shop
+      POSTGRES_PASSWORD: shop
+      POSTGRES_DB: shop
+    volumes:
+      - ./data/ledger.sql:/docker-entrypoint-initdb.d/ledger.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "shop"]
+      interval: 2s
+      retries: 30
+
+  recon:
+    build: ../..
+    # Write the reports as your user, so they are yours on the host.
+    user: "${RECON_UID:-1000}:${RECON_GID:-1000}"
+    environment:
+      LEDGER_DSN: postgres://shop:shop@db:5432/shop
+    volumes:
+      - .:/work
+    depends_on:
+      db: {condition: service_healthy}

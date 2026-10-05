@@ -1,0 +1,26 @@
+{
+  "amount_mismatch": [
+    "pi_000203",
+    "pi_000209"
+  ],
+  "currency_mismatch": [
+    "pi_000205",
+    "pi_000211"
+  ],
+  "duplicate": [
+    "pi_000206",
+    "pi_000212"
+  ],
+  "fee_mismatch": [
+    "pi_000204",
+    "pi_000210"
+  ],
+  "missing_in_ledger": [
+    "pi_000201",
+    "pi_000207"
+  ],
+  "missing_in_provider": [
+    "pi_000202",
+    "pi_000208"
+  ]
+}
