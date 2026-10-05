@@ -29,9 +29,9 @@ func (o Origin) String() string { return fmt.Sprintf("%s:%d", o.File, o.Line) }
 
 // Input describes what was read, so a report can say what it was built from.
 type Input struct {
-	Name   string
-	SHA256 string // empty for SQL
-	Rows   int
+	Name   string `json:"name"`
+	SHA256 string `json:"sha256,omitempty"` // empty for SQL
+	Rows   int    `json:"rows"`
 }
 
 // Read reads one side as the configuration describes it.
