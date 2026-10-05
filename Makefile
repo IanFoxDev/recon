@@ -1,6 +1,6 @@
 LINT_IMAGE := golangci/golangci-lint:v2.14.0
 
-.PHONY: test vet fmt lint build
+.PHONY: test vet fmt lint build check
 
 test:
 	go test -race ./...
@@ -16,3 +16,5 @@ lint:
 
 build:
 	go build -o bin/recon ./cmd/recon
+
+check: vet test lint
