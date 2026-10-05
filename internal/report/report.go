@@ -102,7 +102,7 @@ func amount(minor int64, currency string, currencies money.Currencies) *Amount {
 	return &Amount{Minor: minor, Decimal: money.FormatMinor(minor, exp)}
 }
 
-// Differences in total, to decide the exit code.
+// Total is the number of differences, which decides the exit code.
 func (r Report) Total() int { return len(r.Differences) }
 
 // JSON with two-space indentation and a final newline.
