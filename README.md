@@ -11,7 +11,8 @@ Reconciliation is often a script someone runs by hand, and its output is read wh
 finance asks why the numbers differ. recon is meant to run every morning or in CI: one
 container, one config file, an exit code that says whether everything reconciled.
 
-> Status: in development, nothing released yet.
+> Status: v0.1. Until 1.0 a minor version may change the configuration or the report
+> format; such changes are marked **BREAKING** in the [CHANGELOG](CHANGELOG.md).
 
 ## Quick start
 
@@ -34,7 +35,7 @@ report:
 ```
 
 ```bash
-docker run --rm -v "$PWD:/work" -e LEDGER_DSN=postgres://ro:ro@db/shop ghcr.io/ianfoxdev/recon run -c /work/recon.yaml
+docker run --rm -v "$PWD:/work" -e LEDGER_DSN=postgres://ro:ro@db/shop ghcr.io/ianfoxdev/recon:0.1 run -c /work/recon.yaml
 ```
 
 ```

@@ -7,6 +7,13 @@ configuration or the report format; such changes are marked **BREAKING**.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-05
+
+The first release: a ledger in PostgreSQL or CSV against a provider export, six
+categories of differences, HTML, JSON and CSV reports, and an exit code for CI.
+Checked end to end on generated data with known differences, in CI and in the
+docker compose example.
+
 ### Added
 
 - `recon run -c recon.yaml`: compares a ledger with a provider export and writes HTML,
@@ -22,3 +29,6 @@ configuration or the report format; such changes are marked **BREAKING**.
   report. See [docs/adr/0001-money-and-determinism.md](docs/adr/0001-money-and-determinism.md).
 - Docker image `ghcr.io/ianfoxdev/recon`, `recon-gen` for test data with known
   differences, and an example in `examples/stripe`.
+
+[Unreleased]: https://github.com/IanFoxDev/recon/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/IanFoxDev/recon/releases/tag/v0.1.0
