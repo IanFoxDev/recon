@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reconciliation report</title>
+<style>
+:root { --bg: #ffffff; --fg: #1f2328; --muted: #59636e; --line: #d1d9e0; --bad: #cf222e; --ok: #1a7f37; --head: #f6f8fa; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --line: #3d444d; --bad: #f85149; --ok: #3fb950; --head: #151b23; } }
+body { margin: 0; padding: 24px 16px; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 18px; margin: 32px 0 8px; }
+.muted { color: var(--muted); }
+.summary { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; min-width: 130px; }
+.tile b { display: block; font-size: 22px; }
+.tile.bad b { color: var(--bad); }
+.tile.ok b { color: var(--ok); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; table-layout: fixed; min-width: 720px; }
+td code { word-break: break-all; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--head); font-weight: 600; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+</style>
+</head>
+<body>
+<main>
+<h1>Reconciliation report</h1>
+<p class="muted">recon dev</p>
+
+<div class="summary">
+  <div class="tile ok"><b>2</b>reconciled</div>
+  <div class="tile bad"><b>1</b>missing in ledger</div>
+  <div class="tile bad"><b>1</b>missing in provider</div>
+  <div class="tile bad"><b>1</b>amount mismatch</div>
+  <div class="tile bad"><b>1</b>fee mismatch</div>
+  <div class="tile bad"><b>1</b>currency mismatch</div>
+  <div class="tile"><b>0</b>duplicate</div>
+  
+</div>
+
+
+
+<h2>missing in ledger (1)</h2>
+<div class="scroll"><table>
+<colgroup><col style="width:26%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:30%"></colgroup>
+<tr><th>Key</th><th>Ledger</th><th>Provider</th><th>Difference</th><th>Rows</th></tr>
+<tr>
+<td><code>pi_missing_ledger</code></td>
+<td class="num">&mdash;</td>
+<td class="num">7.00 USD<br><span class="muted">fee 0.50</span></td>
+<td class="num"></td>
+<td><code>stripe_2026-10.csv:5</code></td>
+</tr>
+</table></div>
+
+<h2>missing in provider (1)</h2>
+<div class="scroll"><table>
+<colgroup><col style="width:26%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:30%"></colgroup>
+<tr><th>Key</th><th>Ledger</th><th>Provider</th><th>Difference</th><th>Rows</th></tr>
+<tr>
+<td><code>pi_missing_provider</code></td>
+<td class="num">12.00 USD<br><span class="muted">fee 0.65</span></td>
+<td class="num">&mdash;</td>
+<td class="num"></td>
+<td><code>ledger.csv:5</code></td>
+</tr>
+</table></div>
+
+<h2>amount mismatch (1)</h2>
+<div class="scroll"><table>
+<colgroup><col style="width:26%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:30%"></colgroup>
+<tr><th>Key</th><th>Ledger</th><th>Provider</th><th>Difference</th><th>Rows</th></tr>
+<tr>
+<td><code>pi_amount</code></td>
+<td class="num">20.50 USD<br><span class="muted">fee 0.88</span></td>
+<td class="num">20.00 USD<br><span class="muted">fee 0.88</span></td>
+<td class="num">-0.50</td>
+<td><code>ledger.csv:3<br>stripe_2026-10.csv:3</code></td>
+</tr>
+</table></div>
+
+<h2>fee mismatch (1)</h2>
+<div class="scroll"><table>
+<colgroup><col style="width:26%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:30%"></colgroup>
+<tr><th>Key</th><th>Ledger</th><th>Provider</th><th>Difference</th><th>Rows</th></tr>
+<tr>
+<td><code>pi_fee</code></td>
+<td class="num">5.00 USD<br><span class="muted">fee 0.44</span></td>
+<td class="num">5.00 USD<br><span class="muted">fee 0.45</span></td>
+<td class="num">0.01</td>
+<td><code>ledger.csv:4<br>stripe_2026-10.csv:4</code></td>
+</tr>
+</table></div>
+
+<h2>currency mismatch (1)</h2>
+<div class="scroll"><table>
+<colgroup><col style="width:26%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:30%"></colgroup>
+<tr><th>Key</th><th>Ledger</th><th>Provider</th><th>Difference</th><th>Rows</th></tr>
+<tr>
+<td><code>pi_currency</code></td>
+<td class="num">3.00 EUR<br><span class="muted">fee 0.00</span></td>
+<td class="num">3.00 USD<br><span class="muted">fee 0.39</span></td>
+<td class="num"></td>
+<td><code>ledger.csv:6<br>stripe_2026-10.csv:6</code></td>
+</tr>
+</table></div>
+
+
+<h2>Inputs</h2>
+<div class="scroll"><table>
+<tr><th>Side</th><th>Source</th><th>Rows</th><th>SHA-256</th></tr>
+<tr><td>ledger</td><td><code>ledger.csv</code></td><td class="num">7</td><td><code>4ee25a3105e2ab6d02d86c583a08267bc2b64dd22b14305a02d563b899ac6958</code></td></tr>
+<tr><td>provider</td><td><code>stripe_2026-10.csv</code></td><td class="num">6</td><td><code>f295035b85a4996d0947851439becb73b4e3693b2806b3a7032e3bf7a6e66139</code></td></tr>
+</table></div>
+</main>
+</body>
+</html>

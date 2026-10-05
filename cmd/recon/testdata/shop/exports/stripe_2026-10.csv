@@ -1,0 +1,8 @@
+balance_transaction_id,created,available_on,currency,gross,fee,net,reporting_category,source_id,payment_intent_id,charge_id
+txn_1,2026-10-01 09:00:00,2026-10-03 00:00:00,usd,10.99,0.62,10.37,charge,ch_1,pi_ok,ch_1
+txn_2,2026-10-01 09:10:00,2026-10-03 00:00:00,usd,20.00,0.88,19.12,charge,ch_2,pi_amount,ch_2
+txn_3,2026-10-01 09:20:00,2026-10-03 00:00:00,usd,5.00,0.45,4.55,charge,ch_3,pi_fee,ch_3
+txn_4,2026-10-01 09:30:00,2026-10-03 00:00:00,usd,7.00,0.50,6.50,charge,ch_4,pi_missing_ledger,ch_4
+txn_5,2026-10-01 09:40:00,2026-10-03 00:00:00,usd,3.00,0.39,2.61,charge,ch_5,pi_currency,ch_5
+txn_6,2026-10-01 09:50:00,2026-10-03 00:00:00,usd,15.00,0.45,14.55,charge,ch_6,pi_group,ch_6
+txn_7,2026-10-02 08:00:00,2026-10-04 00:00:00,usd,-60.00,0.00,-60.00,payout,po_1,,

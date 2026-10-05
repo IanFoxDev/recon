@@ -1,0 +1,15 @@
+version: 1
+ledger:
+  csv: {path: ledger.csv}
+  columns: {key: psp_reference, amount: amount, fee: fee, currency: currency}
+provider:
+  csv: {path: exports/stripe_*.csv, profile: stripe_balance}
+  columns: {key: payment_intent_id}
+  filter:
+    - {column: reporting_category, in: [charge]}
+match:
+  group: true
+report:
+  json: out/report.json
+  csv: out/differences.csv
+  html: out/report.html

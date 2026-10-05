@@ -1,0 +1,8 @@
+order_id,psp_reference,amount,fee,currency
+1001,pi_ok,10.99,0.62,USD
+1002,pi_amount,20.50,0.88,USD
+1003,pi_fee,5.00,0.44,USD
+1004,pi_missing_provider,12.00,0.65,USD
+1005,pi_currency,3.00,0.00,EUR
+1006,pi_group,10.00,0.30,USD
+1006,pi_group,5.00,0.15,USD

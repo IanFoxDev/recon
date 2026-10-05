@@ -1,0 +1,200 @@
+{
+  "recon_version": "dev",
+  "inputs": {
+    "ledger": [
+      {
+        "name": "ledger.csv",
+        "sha256": "4ee25a3105e2ab6d02d86c583a08267bc2b64dd22b14305a02d563b899ac6958",
+        "rows": 7
+      }
+    ],
+    "provider": [
+      {
+        "name": "stripe_2026-10.csv",
+        "sha256": "f295035b85a4996d0947851439becb73b4e3693b2806b3a7032e3bf7a6e66139",
+        "rows": 6
+      }
+    ]
+  },
+  "matched": 2,
+  "counts": [
+    {
+      "category": "missing_in_ledger",
+      "count": 1
+    },
+    {
+      "category": "missing_in_provider",
+      "count": 1
+    },
+    {
+      "category": "amount_mismatch",
+      "count": 1
+    },
+    {
+      "category": "fee_mismatch",
+      "count": 1
+    },
+    {
+      "category": "currency_mismatch",
+      "count": 1
+    },
+    {
+      "category": "duplicate",
+      "count": 0
+    }
+  ],
+  "differences": [
+    {
+      "category": "amount_mismatch",
+      "key": [
+        "pi_amount"
+      ],
+      "ledger": {
+        "currency": "USD",
+        "amount": {
+          "minor": 2050,
+          "decimal": "20.50"
+        },
+        "fee": {
+          "minor": 88,
+          "decimal": "0.88"
+        },
+        "rows": [
+          "ledger.csv:3"
+        ]
+      },
+      "provider": {
+        "currency": "USD",
+        "amount": {
+          "minor": 2000,
+          "decimal": "20.00"
+        },
+        "fee": {
+          "minor": 88,
+          "decimal": "0.88"
+        },
+        "rows": [
+          "stripe_2026-10.csv:3"
+        ]
+      },
+      "delta": {
+        "minor": -50,
+        "decimal": "-0.50"
+      }
+    },
+    {
+      "category": "currency_mismatch",
+      "key": [
+        "pi_currency"
+      ],
+      "ledger": {
+        "currency": "EUR",
+        "amount": {
+          "minor": 300,
+          "decimal": "3.00"
+        },
+        "fee": {
+          "minor": 0,
+          "decimal": "0.00"
+        },
+        "rows": [
+          "ledger.csv:6"
+        ]
+      },
+      "provider": {
+        "currency": "USD",
+        "amount": {
+          "minor": 300,
+          "decimal": "3.00"
+        },
+        "fee": {
+          "minor": 39,
+          "decimal": "0.39"
+        },
+        "rows": [
+          "stripe_2026-10.csv:6"
+        ]
+      }
+    },
+    {
+      "category": "fee_mismatch",
+      "key": [
+        "pi_fee"
+      ],
+      "ledger": {
+        "currency": "USD",
+        "amount": {
+          "minor": 500,
+          "decimal": "5.00"
+        },
+        "fee": {
+          "minor": 44,
+          "decimal": "0.44"
+        },
+        "rows": [
+          "ledger.csv:4"
+        ]
+      },
+      "provider": {
+        "currency": "USD",
+        "amount": {
+          "minor": 500,
+          "decimal": "5.00"
+        },
+        "fee": {
+          "minor": 45,
+          "decimal": "0.45"
+        },
+        "rows": [
+          "stripe_2026-10.csv:4"
+        ]
+      },
+      "delta": {
+        "minor": 1,
+        "decimal": "0.01"
+      }
+    },
+    {
+      "category": "missing_in_ledger",
+      "key": [
+        "pi_missing_ledger"
+      ],
+      "ledger": null,
+      "provider": {
+        "currency": "USD",
+        "amount": {
+          "minor": 700,
+          "decimal": "7.00"
+        },
+        "fee": {
+          "minor": 50,
+          "decimal": "0.50"
+        },
+        "rows": [
+          "stripe_2026-10.csv:5"
+        ]
+      }
+    },
+    {
+      "category": "missing_in_provider",
+      "key": [
+        "pi_missing_provider"
+      ],
+      "ledger": {
+        "currency": "USD",
+        "amount": {
+          "minor": 1200,
+          "decimal": "12.00"
+        },
+        "fee": {
+          "minor": 65,
+          "decimal": "0.65"
+        },
+        "rows": [
+          "ledger.csv:5"
+        ]
+      },
+      "provider": null
+    }
+  ]
+}

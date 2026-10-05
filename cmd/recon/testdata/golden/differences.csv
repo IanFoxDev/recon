@@ -1,0 +1,6 @@
+category,key,ledger_currency,ledger_amount,ledger_fee,provider_currency,provider_amount,provider_fee,delta,ledger_rows,provider_rows
+amount_mismatch,pi_amount,USD,20.50,0.88,USD,20.00,0.88,-0.50,ledger.csv:3,stripe_2026-10.csv:3
+currency_mismatch,pi_currency,EUR,3.00,0.00,USD,3.00,0.39,,ledger.csv:6,stripe_2026-10.csv:6
+fee_mismatch,pi_fee,USD,5.00,0.44,USD,5.00,0.45,0.01,ledger.csv:4,stripe_2026-10.csv:4
+missing_in_ledger,pi_missing_ledger,,,,USD,7.00,0.50,,,stripe_2026-10.csv:5
+missing_in_provider,pi_missing_provider,USD,12.00,0.65,,,,,ledger.csv:5,
