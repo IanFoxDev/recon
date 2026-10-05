@@ -25,7 +25,9 @@ holds an amount in a float.
   exponent from ISO 4217 (JPY 0, EUR 2, KWD 3). recon ships the exponent table and
   allows overrides in the configuration for currencies it does not know.
 - A string with more decimal places than the currency allows is an error, not
-  rounded: `"10.999"` in EUR stops the run and names the file, line and column.
+  rounded: `"10.999"` in EUR stops the run and names the file, line and column. Extra
+  places that are zeros do not change the amount and are accepted: some exports write
+  `"100.00"` for a currency without minor units.
 - Amounts outside the `int64` range are an error.
 - The decimal separator and the thousands separator are set per source. Nothing is
   guessed from the data.
