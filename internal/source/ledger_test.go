@@ -42,6 +42,8 @@ insert into ledger_postings (account, sequence, transaction_id, position, side, 
 	('fees:psp', 1, 5, 1, 'D', 129, 129),
 	('user:1', 4, 5, 2, 'C', 3000, 7499);`
 
+// ledgerDB loads the ledger's schema and rows into a schema of their own, so tests of
+// other packages running at the same time do not touch them, and returns a DSN for it.
 func ledgerDB(t *testing.T) string {
 	t.Helper()
 	dsn := os.Getenv("RECON_TEST_PG_DSN")
@@ -58,12 +60,25 @@ func ledgerDB(t *testing.T) string {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, sql := range []string{"drop table if exists ledger_postings, ledger_transactions, ledger_accounts", string(schema), ledgerRows} {
+	for _, sql := range []string{
+		"drop schema if exists recon_source_ledger cascade",
+		"create schema recon_source_ledger",
+		"set search_path to recon_source_ledger",
+		string(schema),
+		ledgerRows,
+	} {
 		if _, err := conn.Exec(ctx, sql); err != nil {
 			t.Fatal(err)
 		}
 	}
-	return dsn
+	return withSearchPath(dsn, "recon_source_ledger")
+}
+
+func withSearchPath(dsn, schema string) string {
+	if strings.Contains(dsn, "?") {
+		return dsn + "&search_path=" + schema
+	}
+	return dsn + "?search_path=" + schema
 }
 
 func TestLedger(t *testing.T) {
