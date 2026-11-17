@@ -77,6 +77,9 @@ Why: [docs/adr/0001-money-and-determinism.md](docs/adr/0001-money-and-determinis
 
 - `sql`: PostgreSQL, read-only. The DSN comes from an environment variable, never from
   the file.
+- `ianfoxdev_ledger`: the tables of [ianfoxdev/ledger](https://github.com/IanFoxDev/ledger),
+  with no SQL to write. Name the account, the meta key with the provider's id and,
+  optionally, the fee account.
 - `csv`: one file or a glob. Delimiter, decimal and thousands separators are set per
   source.
 - `profile: stripe_balance`: Stripe's itemized Balance report

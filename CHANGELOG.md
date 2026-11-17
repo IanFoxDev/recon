@@ -7,6 +7,15 @@ configuration or the report format; such changes are marked **BREAKING**.
 
 ## [Unreleased]
 
+### Added
+
+- Source `ianfoxdev_ledger`: reads one account of an
+  [ianfoxdev/ledger](https://github.com/IanFoxDev/ledger) ledger in PostgreSQL without a
+  query of your own. Amounts on the account's normal side, the key from the
+  transaction's meta (or its idempotency key), and an optional `fee_account` that turns
+  net plus fee into the gross a provider reports. See
+  [ADR 0002](docs/adr/0002-reading-the-tables-of-ianfoxdev-ledger.md).
+
 ## [0.1.0] - 2026-10-05
 
 The first release: a ledger in PostgreSQL or CSV against a provider export, six

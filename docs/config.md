@@ -66,6 +66,39 @@ passes through a float.
 Give the query an `ORDER BY` if you want row numbers in the report to point at the
 same rows on every run. The differences themselves do not depend on the order.
 
+### ianfoxdev_ledger
+
+The tables of [ianfoxdev/ledger](https://github.com/IanFoxDev/ledger) in PostgreSQL,
+read without a query of your own:
+
+```yaml
+ledger:
+  ianfoxdev_ledger:
+    dsn_env: LEDGER_DSN
+    account: cash:psp            # the account the provider's money is booked on
+    key: payment                 # the meta key with the provider's id
+    fee_account: fees:psp        # optional: an expense account in the same currency
+```
+
+recon fills in the columns itself; leave out `columns` and `amounts`.
+
+- One row per ledger transaction that touches `account` (or `fee_account`), in the
+  order of the transactions.
+- The amount is on the account's normal side, as the ledger's `balance_after` is: for
+  a cash account a deposit is positive and a refund negative.
+- The key is the value of `key` in the transaction's meta. A transaction without it is
+  keyed by its idempotency key, so an opening balance shows up as `missing_in_provider`
+  under a name you can find.
+- Without `fee_account` the fee is 0. With it, the fee is what the transaction posted
+  there, and the amount is the cash plus the fee: the gross, as the provider reports
+  it, whether you booked the net to cash at capture or took the fee from cash later.
+- An account that is not in `ledger_accounts` stops the run. An account with no
+  postings gives no rows.
+
+Set `match.group: true`: a payment and its refunds are several transactions. Why
+recon reads these tables and which columns it relies on:
+[ADR 0002](adr/0002-reading-the-tables-of-ianfoxdev-ledger.md).
+
 ### csv
 
 The first line is the header. A byte order mark from a spreadsheet export is skipped.
