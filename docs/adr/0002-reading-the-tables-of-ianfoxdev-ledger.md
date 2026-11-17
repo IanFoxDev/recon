@@ -19,7 +19,8 @@ versions of the ledger.
 ## Decision
 
 A source `ianfoxdev_ledger` with three settings: the DSN variable, the `account` to
-reconcile and the meta `key` that holds the provider's id. It fills in the columns
+reconcile and the meta `key` that holds the provider's id, plus an optional
+`fee_account`. It fills in the columns
 itself; a config that also sets `columns` or `amounts` for it is refused.
 
 - **Sign.** A posting is positive on the account's normal side: a debit for `asset`
@@ -31,12 +32,19 @@ itself; a config that also sets `columns` or `amounts` for it is refused.
   idempotency key. An opening balance or a manual correction then shows up as
   `missing_in_provider` with a key someone can look up, instead of stopping the run on
   an empty key.
-- **Fee.** Zero. When the other side compares fees (the Stripe profile does), the
-  ledger side gets a fee column of zeros, so fee differences are reported rather than
-  the config being refused.
+- **One row per transaction.** The postings of a transaction on the account and on
+  the fee account are summed into one row, ordered by transaction id.
+- **Fee.** Without `fee_account`, zero. When the other side compares fees (the Stripe
+  profile does), the ledger side still gets a fee column of zeros, so fee differences
+  are reported rather than the config being refused. With `fee_account`, an expense
+  account in the same currency, the fee is what the transaction posted there and the
+  amount is the cash plus the fee. A provider reports the gross and the fee; a ledger
+  either books the net to cash and the fee to the expense in the capture, or books the
+  gross and takes the fee from cash later. Both add up to the provider's gross and fee
+  per payment. The fee account should hold the provider's fees and nothing else.
 - **What is read.** `ledger_accounts.code`, `type`, `currency`;
   `ledger_transactions.id`, `idempotency_key`, `meta`; `ledger_postings.account`,
-  `sequence`, `transaction_id`, `side`, `amount`. Nothing else, and never the hash,
+  `transaction_id`, `side`, `amount`. Nothing else, and never the hash,
   which the ledger keeps out of its contract.
 - **How.** One read-only transaction, like the `sql` source. An account that is not in
   `ledger_accounts` stops the run with its name; an account with no postings gives no
@@ -50,7 +58,7 @@ itself; a config that also sets `columns` or `amounts` for it is refused.
   not to its code: ledger changes these columns only in a release marked BREAKING, with
   migration SQL. recon's tests run against a copy of the ledger's schema, refreshed
   when the ledger releases.
-- Rows are ordered by the account's sequence, so the line numbers in a report point at
-  the same postings on every run.
+- Rows are ordered by transaction id, so the line numbers in a report point at the
+  same transactions on every run.
 - The query reads the whole history of the account. Reconciling one period needs a
   window by time, which neither source has yet.

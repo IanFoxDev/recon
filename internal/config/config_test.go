@@ -131,6 +131,13 @@ func TestLedgerSourceFillsColumns(t *testing.T) {
 		t.Errorf("fee column %q", l.Fee)
 	}
 
+	withFee := strings.Replace(ledgerSource, "key: payment}", `key: payment, fee_account: "fees:psp"}`, 1)
+	withFee = strings.Replace(withFee, "{path: balance.csv, profile: stripe_balance}\n  columns: {key: payment_intent_id}",
+		"{path: bank.csv}\n  columns: {key: ref, amount: amount, currency: ccy, fee: fee}", 1)
+	if c, err = Parse([]byte(withFee)); err != nil || c.Ledger.Columns.Fee != "fee" {
+		t.Errorf("fee account: %v %+v", err, c.Ledger.Columns)
+	}
+
 	generic := strings.Replace(ledgerSource, "{path: balance.csv, profile: stripe_balance}\n  columns: {key: payment_intent_id}",
 		"{path: bank.csv}\n  columns: {key: ref, amount: amount, currency: ccy}", 1)
 	c, err = Parse([]byte(generic))
@@ -151,6 +158,7 @@ func TestLedgerSourceRejects(t *testing.T) {
 		{"no dsn env", "dsn_env: LEDGER_DSN, ", "", "ianfoxdev_ledger.dsn_env"},
 		{"columns", "key: payment}\n", "key: payment}\n  columns: {key: id, amount: a, currency: c}\n", "sets the columns itself"},
 		{"amounts", "key: payment}\n", "key: payment}\n  amounts: major\n", "reads minor units"},
+		{"fee account is the account", `key: payment}`, `key: payment, fee_account: "cash:psp"}`, "must differ from account"},
 		{"with sql", "key: payment}\n", "key: payment}\n  sql: {dsn_env: X, query: select 1}\n", "set one of sql, csv, ianfoxdev_ledger"},
 	}
 	for _, tt := range tests {

@@ -51,6 +51,8 @@ type Ledger struct {
 	// Key is the meta key that holds the provider's id. A transaction without it is
 	// keyed by its idempotency key.
 	Key string `yaml:"key"`
+	// FeeAccount is the expense account the provider's fees are booked on. Optional.
+	FeeAccount string `yaml:"fee_account"`
 }
 
 // Columns a Ledger source fills in.
@@ -187,7 +189,7 @@ func (c *Config) applyDefaults() {
 	// A ledger source has a fee column (zero without a fee account) when the other side
 	// compares fees.
 	for _, pair := range [][2]*Source{{&c.Ledger, &c.Provider}, {&c.Provider, &c.Ledger}} {
-		if pair[0].Ledger != nil && pair[0].Columns.Fee == "" && pair[1].Columns.Fee != "" {
+		if pair[0].Ledger != nil && pair[0].Columns.Fee == "" && (pair[1].Columns.Fee != "" || pair[0].Ledger.FeeAccount != "") {
 			pair[0].Columns.Fee = LedgerFee
 		}
 	}
@@ -246,6 +248,9 @@ func (s *Source) check(side string) []error {
 		}
 		if s.Columns.Amount != LedgerAmount || s.Columns.Currency != LedgerCurrency || len(s.Columns.Key) != 1 || s.Columns.Key[0] != LedgerKey {
 			errs = append(errs, fmt.Errorf("%s.columns: ianfoxdev_ledger sets the columns itself; leave them out", side))
+		}
+		if s.Ledger.FeeAccount != "" && s.Ledger.FeeAccount == s.Ledger.Account {
+			errs = append(errs, fmt.Errorf("%s.ianfoxdev_ledger.fee_account: must differ from account", side))
 		}
 		if s.Amounts != "minor" {
 			errs = append(errs, fmt.Errorf("%s.amounts: ianfoxdev_ledger reads minor units; leave it out", side))
