@@ -17,7 +17,7 @@ func readSQL(ctx context.Context, dir string, side config.Source, currencies mon
 	if dsn == "" {
 		return nil, nil, fmt.Errorf("sql: environment variable %s is empty", side.SQL.DSNEnv)
 	}
-	query := side.SQL.Query
+	sql := side.SQL.Query
 	name := "sql"
 	if side.SQL.QueryFile != "" {
 		path := side.SQL.QueryFile
@@ -28,9 +28,15 @@ func readSQL(ctx context.Context, dir string, side config.Source, currencies mon
 		if err != nil {
 			return nil, nil, fmt.Errorf("sql.query_file: %w", err)
 		}
-		query, name = string(data), filepath.Base(path)
+		sql, name = string(data), filepath.Base(path)
 	}
 
+	return query(ctx, dsn, side, currencies, name, nil, sql)
+}
+
+// query runs one statement in a read-only transaction and builds rows from the result.
+// before, if set, runs first in the same transaction.
+func query(ctx context.Context, dsn string, side config.Source, currencies money.Currencies, name string, before func(pgx.Tx) error, sql string, args ...any) ([]Row, []Input, error) {
 	conn, err := pgx.Connect(ctx, dsn)
 	if err != nil {
 		return nil, nil, fmt.Errorf("sql: connect: %w", err)
@@ -43,9 +49,14 @@ func readSQL(ctx context.Context, dir string, side config.Source, currencies mon
 		return nil, nil, fmt.Errorf("sql: %w", err)
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
+	if before != nil {
+		if err := before(tx); err != nil {
+			return nil, nil, err
+		}
+	}
 
 	// Every value comes back as text, so numeric is never read through a float.
-	result, err := tx.Query(ctx, query, pgx.QueryResultFormats{pgx.TextFormatCode})
+	result, err := tx.Query(ctx, sql, append([]any{pgx.QueryResultFormats{pgx.TextFormatCode}}, args...)...)
 	if err != nil {
 		return nil, nil, fmt.Errorf("sql: %w", err)
 	}

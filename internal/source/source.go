@@ -41,6 +41,8 @@ func Read(ctx context.Context, cfg config.Config, side config.Source, currencies
 		return readCSV(cfg.Dir, side, currencies)
 	case side.SQL != nil:
 		return readSQL(ctx, cfg.Dir, side, currencies)
+	case side.Ledger != nil:
+		return readLedger(ctx, side, currencies)
 	}
 	return nil, nil, fmt.Errorf("no source configured")
 }

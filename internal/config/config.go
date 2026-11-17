@@ -29,6 +29,7 @@ type Config struct {
 type Source struct {
 	SQL     *SQL     `yaml:"sql"`
 	CSV     *CSV     `yaml:"csv"`
+	Ledger  *Ledger  `yaml:"ianfoxdev_ledger"`
 	Columns Columns  `yaml:"columns"`
 	Amounts string   `yaml:"amounts"` // "major" (decimal strings) or "minor" (integers)
 	Filter  []Filter `yaml:"filter"`
@@ -41,6 +42,24 @@ type SQL struct {
 	Query     string `yaml:"query"`
 	QueryFile string `yaml:"query_file"`
 }
+
+// Ledger reads the postings of one account from the tables of ianfoxdev/ledger in
+// PostgreSQL. It fills in the columns itself.
+type Ledger struct {
+	DSNEnv  string `yaml:"dsn_env"`
+	Account string `yaml:"account"`
+	// Key is the meta key that holds the provider's id. A transaction without it is
+	// keyed by its idempotency key.
+	Key string `yaml:"key"`
+}
+
+// Columns a Ledger source fills in.
+const (
+	LedgerKey      = "key"
+	LedgerAmount   = "amount"
+	LedgerFee      = "fee"
+	LedgerCurrency = "currency"
+)
 
 // CSV reads rows from one or more files.
 type CSV struct {
@@ -57,6 +76,10 @@ type Columns struct {
 	Amount   string `yaml:"amount"`
 	Fee      string `yaml:"fee"`
 	Currency string `yaml:"currency"`
+}
+
+func (c Columns) isZero() bool {
+	return len(c.Key) == 0 && c.Amount == "" && c.Fee == "" && c.Currency == ""
 }
 
 // Keys is one column name or a list of them.
@@ -136,6 +159,12 @@ func Parse(data []byte) (Config, error) {
 
 func (c *Config) applyDefaults() {
 	for _, s := range []*Source{&c.Ledger, &c.Provider} {
+		if s.Ledger != nil && s.Columns.isZero() {
+			s.Columns = Columns{Key: Keys{LedgerKey}, Amount: LedgerAmount, Currency: LedgerCurrency}
+		}
+		if s.Ledger != nil && s.Amounts == "" {
+			s.Amounts = "minor"
+		}
 		if s.CSV != nil {
 			if p, ok := profiles[s.CSV.Profile]; ok {
 				p.apply(s)
@@ -153,6 +182,13 @@ func (c *Config) applyDefaults() {
 			} else {
 				s.Amounts = "major"
 			}
+		}
+	}
+	// A ledger source has a fee column (zero without a fee account) when the other side
+	// compares fees.
+	for _, pair := range [][2]*Source{{&c.Ledger, &c.Provider}, {&c.Provider, &c.Ledger}} {
+		if pair[0].Ledger != nil && pair[0].Columns.Fee == "" && pair[1].Columns.Fee != "" {
+			pair[0].Columns.Fee = LedgerFee
 		}
 	}
 	if c.Report.FailOn == "" {
@@ -187,11 +223,33 @@ func (c *Config) check() []error {
 
 func (s *Source) check(side string) []error {
 	var errs []error
+	kinds := 0
+	for _, set := range []bool{s.SQL != nil, s.CSV != nil, s.Ledger != nil} {
+		if set {
+			kinds++
+		}
+	}
 	switch {
-	case s.SQL == nil && s.CSV == nil:
-		errs = append(errs, fmt.Errorf("%s: set sql or csv", side))
-	case s.SQL != nil && s.CSV != nil:
-		errs = append(errs, fmt.Errorf("%s: set sql or csv, not both", side))
+	case kinds == 0:
+		errs = append(errs, fmt.Errorf("%s: set sql, csv or ianfoxdev_ledger", side))
+	case kinds > 1:
+		errs = append(errs, fmt.Errorf("%s: set one of sql, csv, ianfoxdev_ledger", side))
+	case s.Ledger != nil:
+		if s.Ledger.DSNEnv == "" {
+			errs = append(errs, fmt.Errorf("%s.ianfoxdev_ledger.dsn_env: the name of the environment variable with the DSN", side))
+		}
+		if s.Ledger.Account == "" {
+			errs = append(errs, fmt.Errorf("%s.ianfoxdev_ledger.account: the account to reconcile, such as cash:psp", side))
+		}
+		if s.Ledger.Key == "" {
+			errs = append(errs, fmt.Errorf("%s.ianfoxdev_ledger.key: the meta key with the provider's id, such as payment", side))
+		}
+		if s.Columns.Amount != LedgerAmount || s.Columns.Currency != LedgerCurrency || len(s.Columns.Key) != 1 || s.Columns.Key[0] != LedgerKey {
+			errs = append(errs, fmt.Errorf("%s.columns: ianfoxdev_ledger sets the columns itself; leave them out", side))
+		}
+		if s.Amounts != "minor" {
+			errs = append(errs, fmt.Errorf("%s.amounts: ianfoxdev_ledger reads minor units; leave it out", side))
+		}
 	case s.SQL != nil:
 		if s.SQL.DSNEnv == "" {
 			errs = append(errs, fmt.Errorf("%s.sql.dsn_env: the name of the environment variable with the DSN", side))
