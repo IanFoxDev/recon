@@ -7,6 +7,11 @@ configuration or the report format; such changes are marked **BREAKING**.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-18
+
+recon reads an ianfoxdev/ledger ledger directly: four lines of config instead of a
+query of your own.
+
 ### Added
 
 - Source `ianfoxdev_ledger`: reads one account of an
@@ -39,5 +44,6 @@ docker compose example.
 - Docker image `ghcr.io/ianfoxdev/recon`, `recon-gen` for test data with known
   differences, and an example in `examples/stripe`.
 
-[Unreleased]: https://github.com/IanFoxDev/recon/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/IanFoxDev/recon/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/IanFoxDev/recon/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/IanFoxDev/recon/releases/tag/v0.1.0
